@@ -1,3 +1,6 @@
+import { cart } from "../data/cart.js";
+import { products } from "../data/products.js";
+
 let productHTML = "";
 
 products.forEach((product) => {
@@ -58,56 +61,62 @@ document.querySelector(".products-grid").innerHTML = productHTML;
 document.querySelectorAll(".js-add-to-cart-button").forEach((button) => {
   button.addEventListener("click", () => {
     const { productId } = button.dataset;
-    console.log(productId);
-
-    let timeoutId = {};
-
-    const selectedQuantity = document.querySelector(
-      `.js-quantity-selector-${productId}`,
-    ).value;
-
-    let matchingProductItem;
-
-    cart.forEach((item) => {
-      if (productId === item.productId) {
-        matchingProductItem = item;
-      }
-    });
-
-    if (matchingProductItem) {
-      matchingProductItem.productQuantity += Number(selectedQuantity);
-    } else {
-      cart.push({
-        productId,
-        productQuantity: Number(selectedQuantity),
-      });
-    }
-
-    let cartQuantity = 0;
-    cart.forEach((item) => {
-      cartQuantity += item.productQuantity;
-    });
-
-    document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
-
-    console.log(cart);
-
-    document
-      .querySelector(`.js-added-to-cart-${productId}`)
-      .classList.add("js-added-cart");
-
-    const previousAddToCartTimeoutId = timeoutId[productId];
-
-    if (previousAddToCartTimeoutId) {
-      clearTimeout(previousAddToCartTimeoutId);
-    }
-
-    const addToCartTimeoutId = setTimeout(() => {
-      document
-        .querySelector(`.js-added-to-cart-${productId}`)
-        .classList.remove("js-added-cart");
-    }, 2000);
-
-    timeoutId[productId] = addToCartTimeoutId;
+    addToCart(productId);
+    updateCartQuantity();
+    addedToCartDom(productId);
   });
 });
+
+function addToCart(productId) {
+  let matchingProductItem;
+
+  const selectedQuantity = document.querySelector(
+    `.js-quantity-selector-${productId}`,
+  ).value;
+
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      matchingProductItem = cartItem;
+    }
+  });
+
+  if (matchingProductItem) {
+    matchingProductItem.productQuantity += Number(selectedQuantity);
+  } else {
+    cart.push({
+      productId,
+      productQuantity: Number(selectedQuantity),
+    });
+  }
+}
+
+function updateCartQuantity() {
+  let cartQuantity = 0;
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.productQuantity;
+  });
+
+  document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+}
+
+function addedToCartDom(productId) {
+  let timeoutId = {};
+
+  document
+    .querySelector(`.js-added-to-cart-${productId}`)
+    .classList.add("js-added-cart");
+
+  const previousAddToCartTimeoutId = timeoutId[productId];
+
+  if (previousAddToCartTimeoutId) {
+    clearTimeout(previousAddToCartTimeoutId);
+  }
+
+  const addToCartTimeoutId = setTimeout(() => {
+    document
+      .querySelector(`.js-added-to-cart-${productId}`)
+      .classList.remove("js-added-cart");
+  }, 2000);
+
+  timeoutId[productId] = addToCartTimeoutId;
+}
