@@ -1,4 +1,4 @@
-import { cart } from "../data/cart.js";
+import { cart, addToCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatMoney } from "./utils/money.js";
 
@@ -67,29 +67,6 @@ document.querySelectorAll(".js-add-to-cart-button").forEach((button) => {
     addedToCartDom(productId);
   });
 });
-
-function addToCart(productId) {
-  let matchingProductItem;
-
-  const selectedQuantity = document.querySelector(
-    `.js-quantity-selector-${productId}`,
-  ).value;
-
-  cart.forEach((cartItem) => {
-    if (productId === cartItem.productId) {
-      matchingProductItem = cartItem;
-    }
-  });
-
-  if (matchingProductItem) {
-    matchingProductItem.productQuantity += Number(selectedQuantity);
-  } else {
-    cart.push({
-      productId,
-      productQuantity: Number(selectedQuantity),
-    });
-  }
-}
 
 function updateCartQuantity() {
   let cartQuantity = 0;
