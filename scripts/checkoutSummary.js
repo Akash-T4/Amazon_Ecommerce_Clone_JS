@@ -4,6 +4,7 @@ import {
   calculateCartQuantity,
   updateDeliveryOption,
   findProductInCart,
+  updateProductQuantity,
 } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatMoney } from "./utils/money.js";
@@ -54,6 +55,8 @@ export default function renderCheckoutSummary() {
             <span class="update-quantity-link link-primary js-update-quantity-link" data-product-id=${cartItem.productId}>
               Update
             </span>
+            <input class="quantity-input" type="number">
+            <span class="save-quantity-link link-primary js-save-quantity-link" data-product-id=${cartItem.productId}>Save</span>
             <span class="delete-quantity-link link-primary js-delete-quantity-link" data-product-id=${cartItem.productId}>
               Delete
             </span>
@@ -141,9 +144,27 @@ export default function renderCheckoutSummary() {
   document
     .querySelectorAll(".js-update-quantity-link")
     .forEach((updateButton) => {
-      const productId = updateButton.dataset.productId;
-      console.log(productId);
+      updateButton.addEventListener("click", () => {
+        const { productId } = updateButton.dataset;
+        document
+          .querySelector(`.js-cart-item-container-${productId}`)
+          .classList.add("is-editing-quantity");
+      });
     });
+
+  document.querySelectorAll(".js-save-quantity-link").forEach((saveButton) => {
+    saveButton.addEventListener("click", () => {
+      const { productId } = saveButton.dataset;
+      document
+        .querySelector(`.js-cart-item-container-${productId}`)
+        .classList.remove("is-editing-quantity");
+
+      const newQuantity = document.querySelector(".quantity-input").value;
+      updateProductQuantity(productId, newQuantity);
+      renderCheckoutSummary();
+      renderPaymentSummary();
+    });
+  });
 
   document.querySelectorAll(".js-delivery-option").forEach((deliveryOption) => {
     deliveryOption.addEventListener("click", () => {

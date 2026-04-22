@@ -71,3 +71,16 @@ export function findProductInCart(productId) {
   });
   return productsInCart;
 }
+
+export function updateProductQuantity(productId, newQuantity) {
+  if (newQuantity >= 0 && newQuantity <= 1000) {
+    let matchingProductItem;
+    cart.forEach((cartItem) => {
+      if (productId === cartItem.productId) {
+        matchingProductItem = cartItem;
+      }
+    });
+    matchingProductItem.productQuantity = Number(newQuantity);
+    updateLocalStorage();
+  }
+}
