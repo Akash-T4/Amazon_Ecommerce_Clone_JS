@@ -46,7 +46,7 @@ export default function renderCheckoutSummary() {
            ${productsInCart.name}
           </div>
           <div class="product-price">
-            $${formatMoney(productsInCart.priceCents)}
+            ${productsInCart.getProductPrice()}
           </div>
           <div class="product-quantity">
             <span>
